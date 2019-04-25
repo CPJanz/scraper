@@ -7,18 +7,13 @@ var Schema = mongoose.Schema;
 // Using the Schema constructor, create a new ExampleSchema object
 // This is similar to a Sequelize model
 var noteSchema = new Schema({
-  author: {
-    type: String,
-    trim: true,
-    required: true
-  },
   text: {
     type: String,
     trim: true,
     required: true
   },
   articleId: {
-    type: Schema.Types.ObjectId
+    type: String
   }
 });
 

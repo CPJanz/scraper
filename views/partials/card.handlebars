@@ -30,15 +30,17 @@
                 <ul>
                     {{#each notes}}
                     <li>
-                        <button class="btn btn-danger note-delete-btn" data-id="{{_id}}"
-                            data-articleId="{{articleId}}">X</button>
-                    </li> {{text}}
+                        <button class="btn btn-danger delete-comment-btn" data-id="{{_id}}"
+                            data-article-id="{{articleId}}">X</button><span>{{text}}</span>
+                    </li>
                     {{/each}}
                 </ul>
             </div>
             <div class="modal-footer">
-                <button type="button" data-dismiss="modal" data-articleId="{{articleId}}"
-                    class="btn btn-primary add-comment-btn">Add Comment</button>
+                <label for="input-{{@index}}">Comment</label>
+                <input type="text" class="form-control" id="input-{{@index}}">
+                <button class="btn btn-primary add-comment-btn" type="button" data-dismiss="modal"
+                    data-article-id="{{_id}}" data-text-id="#input-{{@index}}">Add Comment</button>
             </div>
         </div>
     </div>

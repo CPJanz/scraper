@@ -32,6 +32,15 @@ app.set("view engine", "handlebars");
 
 // Routes
 
+app.get("/", function(req, res) {
+  console.log("route hit!");
+  db.Article.find({})
+    .populate("notes")
+    .then(function(dbArticle) {
+      res.render("index", { articles: dbArticle });
+    });
+});
+
 app.get("/api/scrape", function(req, res) {
   axios
     .get("http://www.starcitygames.com/articles/tags/Select/")
@@ -62,13 +71,17 @@ app.get("/api/scrape", function(req, res) {
         };
         results.push(newArticle);
       });
-      db.Article.create(results).catch(function(err) {
-        console.log(err.code);
-      });
-      res.json(results);
+      db.Article.create(results)
+        .catch(function(err) {
+          console.log(err.code);
+        })
+        .then(function(data) {
+          res.send("Articles scraped");
+        });
     });
 });
 
+//Returns article whose id is passed as a param
 app.get("/api/article/:id", function(req, res) {
   db.Article.findById(req.params.id)
     .populate("note")
@@ -77,25 +90,53 @@ app.get("/api/article/:id", function(req, res) {
     });
 });
 
-app.get("*", function(req, res) {
-  db.Article.find({}).then(function(dbArticle) {
-    res.render("index", { articles: dbArticle });
-  });
+app.delete("/api/deleteNote/", function(req, res) {
+  db.Note.findByIdAndDelete(req.body.id)
+    .then(function(data) {
+      db.Article.findByIdAndUpdate(data.articleId, {
+        $pullAll: { notes: [req.body.id] }
+      });
+    })
+    .then(function(data) {
+      res.send("Comment deleted");
+    });
 });
 
-app.delete("/api/deleteNote/:id", function(req, res) {
-  const removedPost = db.Note.findByIdAndDelete(req.params.id);
-  db.Article.findByIdAndUpdate(removedPost.articleId, {
-    $pullAll: { notes: [req.params.id] }
+app.post("/api/addNote", function(req, res) {
+  console.log("Attempting to add note");
+  db.Note.create(req.body).then(function(note) {
+    console.log(
+      "added note, attempting to update article.",
+      req.body.articleId
+    );
+    db.Article.findByIdAndUpdate(req.body.articleId, {
+      $push: { notes: note._id }
+    })
+      .catch(function(err) {
+        console.log(err);
+      })
+      .then(function(result) {
+        res.send("Comment added");
+      });
   });
 });
 
 app.delete("/api/deleteAll", function(req, res) {
-  //TODO: Delete
-  // db.Article.remove({}).then(function(result) {
-  //     db.Note.remove({})
-  // }).then(function ())
-  // res.text("Deleted all articles and notes.")
+  db.Article.remove({})
+    .then(function(data) {
+      db.Note.remove({});
+    })
+    .then(function(data) {
+      res.send("Deleted all articles and notes.");
+    });
+});
+
+app.get("*", function(req, res) {
+  db.Article.find({})
+    .populate("notes")
+    .then(function(dbArticle) {
+      res.render("index", { articles: dbArticle });
+    });
 });
 
 app.listen(PORT, function() {
