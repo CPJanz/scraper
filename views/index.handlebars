@@ -1,0 +1,16 @@
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <h1 class="display-3">Star City Scraper</h1>
+        <p class="lead">Scrapes the free articles on Star City Games</p>
+        <button id="scrape-btn" class="btn btn-primary">Scrape Articles</button>
+        <button class="btn btn-danger">Delete Articles</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        {{#each articles}}
+        {{> card}}
+        {{/each}}
+    </div>
+</div>

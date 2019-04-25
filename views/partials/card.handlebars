@@ -1,0 +1,45 @@
+<div class="col-12 col-md-4">
+    <div class="card mb-2">
+        <div class="card-header">
+            <h5 class="card-title text-uppercase">{{title}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted"> <img style="height:40px; width:40px" src="{{avatar}}"
+                    alt="{{author}}"> {{author}}</h6>
+        </div>
+        <div class="card-body">
+            <p class="card-text">{{blurb}}</p>
+            <button type="button" class="btn btn-secondary btn-sm btn-comments" data-toggle="modal"
+                data-target="#modal-{{@index}}">Comments
+                ({{notes.length}})</button>
+            <a href="{{link}}" class="card-link" target="_blank">Read Article</a>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-{{@index}}" tabindex="-1" role="dialog" aria-labelledby="ModalLabel{{id}}"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel{{id}}">Comments
+                    For: {{title}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    {{#each notes}}
+                    <li>
+                        <button class="btn btn-danger note-delete-btn" data-id="{{_id}}"
+                            data-articleId="{{articleId}}">X</button>
+                    </li> {{text}}
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
